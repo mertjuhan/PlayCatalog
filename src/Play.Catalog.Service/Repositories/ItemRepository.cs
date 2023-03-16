@@ -15,9 +15,9 @@ namespace Play.Catalog.Service.Repositories
         private readonly IMongoDatabase _database = null;
         private readonly IMongoCollection<Item> dbcollection;
 
-        private readonly FilterDefinitionBuilder<Item>
+        private readonly FilterDefinitionBuilder<Item> filterBuilder = Builders<Item>.Filter;
 
-    public ItemRepository(IOptions<Settings> settings)
+        public ItemRepository(IOptions<Settings> settings)
         {
             var client = new MongoClient(settings.Value.ConnectionString);
             if (client != null)
@@ -30,7 +30,39 @@ namespace Play.Catalog.Service.Repositories
 
         public async Task<IReadOnlyCollection<Item>> GetItems()
         {
-            return null;
+            return await dbcollection.Find(filterBuilder.Empty).ToListAsync();
+        }
+
+        public async Task<Item> GetItemAsync(Guid Id)
+        {
+            FilterDefinition<Item> filter = filterBuilder.Eq(entity => entity.Id, Id);
+            return await dbcollection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task CreateItemAsync(Item entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            await dbcollection.InsertOneAsync(entity);
+        }
+
+        public async Task UpdateItemAsync(Item entity)
+        {
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+            FilterDefinition<Item> filter = filterBuilder.Eq(existingItem => existingItem.Id, entity.Id);
+            await dbcollection.FindOneAndReplaceAsync(filter, entity);
+        }
+
+        public async Task DeleteItemAsync(Guid Id)
+        {
+            FilterDefinition<Item> filter = filterBuilder.Eq(entity => entity.Id, Id);
+            await dbcollection.FindOneAndDeleteAsync(filter);
         }
 
     }
