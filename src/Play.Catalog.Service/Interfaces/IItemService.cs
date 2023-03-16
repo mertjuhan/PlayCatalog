@@ -7,5 +7,7 @@ namespace Play.Catalog.Service.Interfaces
         Task<IEnumerable<ItemDto>> GetItems();
         Task<IEnumerable<ItemDto>> GetItemsById(Guid Id);
         Task<IEnumerable<ItemDto>> CreateItem(CreateItemDto createItemDto);
+        Task<IEnumerable<ItemDto>> UpdateItem(Guid Id, UpdateItemDto updateItemDto);
+        Task<bool> DeleteItem(Guid Id);
     }
 }

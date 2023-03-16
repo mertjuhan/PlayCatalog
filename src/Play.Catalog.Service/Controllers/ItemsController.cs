@@ -37,5 +37,21 @@ namespace Play.Catalog.Service.Controllers
             return await _service.CreateItem(createItemDto);
         }
 
+        [HttpPost("/UpdateItem")]
+
+        public async Task<IEnumerable<ItemDto>> UpdateItem(Guid Id, UpdateItemDto updateItemDto)
+        {
+
+            return await _service.UpdateItem(Id, updateItemDto);
+        }
+
+
+        [HttpDelete("{Id}")]
+
+        public async Task<bool> DeleteItem(Guid Id)
+        {
+
+            return await _service.DeleteItem(Id);
+        }
     }
 }

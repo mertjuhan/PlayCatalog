@@ -38,5 +38,43 @@ namespace Play.Catalog.Service.Services
 
             return Task.FromResult(items.Where(x => x.Id == Id).AsEnumerable());
         }
+        public Task<IEnumerable<ItemDto>> UpdateItem(Guid Id, UpdateItemDto updateItemDto)
+        {
+
+            var item = items.Where(x => x.Id == Id).FirstOrDefault();
+
+            if (item != null)
+            {
+                var updateditem = item with
+                {
+                    Name = updateItemDto.Name,
+                    Description = updateItemDto.Description,
+                    Price = updateItemDto.Price
+                };
+
+                var index = items.FindIndex(x => x.Id == Id);
+                items[index] = updateditem;
+            }
+
+            return Task.FromResult(items.Where(x => x.Id == Id).AsEnumerable());
+        }
+
+        public Task<bool> DeleteItem(Guid Id)
+        {
+
+            var item = items.Where(x => x.Id == Id).FirstOrDefault();
+            if (item != null)
+            {
+                var result = items.Remove(item);
+                return Task.FromResult(result);
+            }
+
+
+            return Task.FromResult(false);
+
+        }
+
+
     }
+
 }
